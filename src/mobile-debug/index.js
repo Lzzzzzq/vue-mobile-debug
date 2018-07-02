@@ -17,7 +17,8 @@ MobileDebugPlugin.install = function (Vue, hide) {
   }
 
   Vue.prototype.$log = function (cont) {
-    if (!cont) return false
+    if (!cont || hide) return false
+    console.log(cont)
     cont = formatCont(cont)
     instance.log.push({
       cont: cont,
@@ -26,7 +27,8 @@ MobileDebugPlugin.install = function (Vue, hide) {
     })
   }
   Vue.prototype.$err = function (cont) {
-    if (!cont) return false
+    if (!cont || hide) return false
+    console.warn(cont)
     cont = formatCont(cont)
     instance.log.push({
       cont: cont,
