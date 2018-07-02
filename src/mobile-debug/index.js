@@ -16,12 +16,21 @@ MobileDebugPlugin.install = function (Vue, hide) {
     instance.enabled = true
   }
 
-  Vue.prototype.$log = function (cont, error) {
+  Vue.prototype.$log = function (cont) {
     if (!cont) return false
     cont = formatCont(cont)
     instance.log.push({
       cont: cont,
-      type: error ? 'error' : 'normal',
+      type: 'normal',
+      component: this.$options.name || 'Not vue'
+    })
+  }
+  Vue.prototype.$err = function (cont) {
+    if (!cont) return false
+    cont = formatCont(cont)
+    instance.log.push({
+      cont: cont,
+      type: 'error',
       component: this.$options.name || 'Not vue'
     })
   }

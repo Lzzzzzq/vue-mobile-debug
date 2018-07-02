@@ -32,8 +32,8 @@ export default {
       this.$log(123)
       this.$log('123')
       this.$log([1, 2, 3])
-      this.$log({a: 1, b: 2, c: 3, d: '这是个啥', e: '超出长度了的话会发生什么情况呢aaaaaaa'}, true)
-      this.$log(function tst () {})
+      this.$log({a: 1, b: 2, c: 3, d: '这是个啥', e: '超出长度了的话会发生什么情况呢aaaaaaa'})
+      this.$err(function tst () {})
       this.active = true
     }
   },
