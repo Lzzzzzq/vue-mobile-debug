@@ -3,6 +3,14 @@
     <img src="./assets/logo.png" class="img" :class="{'active': active}">
     <div>
       <button @click="moveImg" class="btn" ref="btn">move</button>
+      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
+      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1
+      <img src="//gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="">
+      <br/>1<br/>1<br/>1<br/>1<br/>1<br/>
+      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
+      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
+      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
+      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
     </div>
   </div>
 </template>
@@ -22,6 +30,10 @@ export default {
       // console.log(btn.clientHeight)
       // let btn = this.$refs.btn
       this.$log(123)
+      this.$log('123')
+      this.$log([1, 2, 3])
+      this.$log({a: 1, b: 2, c: 3, d: '这是个啥', e: '超出长度了的话会发生什么情况呢aaaaaaa'}, true)
+      this.$log(function tst () {})
       this.active = true
     }
   },

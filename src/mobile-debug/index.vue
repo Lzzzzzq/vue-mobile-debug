@@ -1,5 +1,5 @@
 <template>
-  <div class="mobileDebugWrap" @touchmove.stop="">
+  <div class="mobileDebugWrap" @touchmove.stop="" v-if="enabled">
     <div
       class="mobileDebugSwitch"
       :class="{'mobileDebugSwitchActive': show}"
@@ -34,15 +34,43 @@
       </div>
       <div class="mobileDebugContWrap">
         <!-- log框 -->
-        <div class="mobileDebugCont" v-show="navIndex === 0">
-          <div class="mobileDebugLogItem clearfix" v-for="(log, index) in log" :key="index">
-            <div class="mobileDebugLogItemCont">{{log.cont || undefined}}</div>
+        <div class="mobileDebugLogOperate" v-show="navIndex === 0">
+          <div class="mobileDebugLogOperateItem" @click="handleCleanAllLog">清空</div>
+        </div>
+        <div class="mobileDebugCont" ref="logWrap" v-show="navIndex === 0" :style="{'margin-top': '20px'}">
+          <div
+            class="mobileDebugLogItem clearfix"
+            :class="{mobileDebugLogItemErr: log.type === 'error'}"
+            v-for="(log, index) in log"
+            :key="index"
+            @touchstart.stop="handleItemTouchStart"
+            @touchmove.stop="handleItemTouchMove(index)"
+            @touchend.stop="handleItemTouchEnd"
+          >
+            <div class="mobileDebugLogItemCont"><pre>{{log.cont || undefined}}</pre></div>
             <div class="mobileDebugLogItemComponent">{{log.component || 'unset'}}</div>
           </div>
         </div>
         <!-- 操作框 -->
         <div class="mobileDebugCont" v-show="navIndex === 1">
-          caozuo
+          <div class="mobileDebugOperateBtn" @click="handleRefreshPage">刷新页面</div>
+        </div>
+        <!-- 数据框 -->
+        <div class="mobileDebugCont" v-show="navIndex === 2">
+          <div class="mobileDebugDataBtnWrap clearfix">
+            <div
+              class="mobileDebugDataBtn"
+              :class="{mobileDebugDataBtnActive: dataIndex === index}"
+              v-for="(item, index) in dataBtn"
+              :key="index"
+              @click="handleSelectDataBtn(index)"
+            >
+              {{item.name}}
+            </div>
+          </div>
+          <div class="mobileDebugDataCont">
+            <pre>{{dataCont}}</pre>
+          </div>
         </div>
       </div>
     </div>
@@ -54,6 +82,7 @@ export default {
   name: 'MobileDebug',
   data () {
     return {
+      enabled: false,
       show: false, // 调试框显示状态
       touch: false, // 手指是否接触开关
       left: 30, // 开关距离左边距离
@@ -65,10 +94,35 @@ export default {
         name: 'log'
       }, {
         name: '操作'
+      }, {
+        name: '数据'
       }],
       navIndex: 0, // 导航选中的索引值
-      log: []
+      deleteOffsite: 75, // 删除需要滑动的距离
+      deleteTouch: false, // 手指是否接触单条
+      deleteTouchStart: 0, // 删除某条时手指接触的位置
+      deleteIndex: -1, // 要删除的条的索引值
+      log: [], // log列表
+      dataBtn: [ // 数据框内的按钮
+        {
+          name: 'Cookies'
+        }, {
+          name: 'LocalStorage'
+        }
+      ],
+      dataIndex: -1, // 数据框内选择的按钮
+      dataCont: '' // 数据框内容
     }
+  },
+  watch: {
+    log: function () {
+      setTimeout(() => {
+        this.$refs.logWrap.scrollTop = this.$refs.logWrap.scrollHeight
+      })
+    }
+  },
+  mounted: function () {
+    this.handleSelectDataBtn(0)
   },
   methods: {
     handleTouchStart: function (e) { // 手指触碰后
@@ -88,124 +142,54 @@ export default {
       this.top = clientY - this.offsetY
     },
     handleTouchEnd: function () { // 手指停止拖动
+      if (!this.touch) return false
       this.touch = false
     },
     handleSelectNav: function (index) { // 切换导航
       this.navIndex = index
+    },
+    handleItemTouchStart: function (e) { // 某一条被手指接触
+      this.deleteTouch = true
+      this.deleteTouchStart = e.targetTouches[0].clientX
+    },
+    handleItemTouchMove: function (index) { // 某一条手指移动
+      if (!this.deleteTouch) return false
+      this.deleteIndex = index
+    },
+    handleItemTouchEnd: function (e) { // 某一条停止移动
+      if (!this.deleteTouch) return false
+      let deleteOffset = Math.abs(e.changedTouches[0].clientX - this.deleteTouchStart)
+      if (deleteOffset > this.deleteOffsite) {
+        this.log.splice(this.deleteIndex, 1)
+      }
+      this.deleteIndex = -1
+      this.deleteTouch = false
+    },
+    handleCleanAllLog: function () { // 清空log
+      this.log = []
+    },
+    handleRefreshPage: function () { // 刷新页面
+      location.reload(true)
+    },
+    handleSelectDataBtn: function (index) { // 选择数据项
+      this.dataCont = ''
+      this.dataIndex = index
+      if (index === 0) { // 获取 cookies
+        if (!document.cookie) return
+        let cookieArr = document.cookie.split('; ')
+        let cookies = {}
+        cookieArr.map(item => {
+          cookies[item.split('=')[0]] = item.split('=')[1]
+        })
+        this.dataCont = JSON.stringify(cookies, null, 2)
+      } else if (index === 1) { // 获取 localstorage
+        this.dataCont = JSON.stringify(localStorage, null, 2)
+      }
     }
   }
 }
 </script>
 
-<style>
-.clear {
-  width: 0;
-  height: 0;
-  clear: both;
-}
-.clearfix {
-  zoom: 1;
-}
-.clearfix {
-   content: "";
-   display: table;
-   clear: both;
-}
-.mobileDebugWrap {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-size: 14px;
-}
-.mobileDebugSwitch {
-  position: fixed;
-  z-index: 1000;
-  border-radius: 50%;
-  background-color: black;
-  opacity: 0.8;
-  color: #fff;
-  text-align: center;
-  font-size: 30px;
-}
-.mobileDebugSwitchActive {
-  box-shadow: 0 0 10px green;
-}
-.mobileDebugModal {
-  position: fixed;
-  z-index: 999;
-  top: 20px;
-  left: 5%;
-  box-sizing: border-box;
-  padding: 0 20px;
-  border-radius: 4px;
-  height: 50%;
-  width: 90%;
-  background-color: grey;
-  opacity: 0.6;
-}
-.mobileDebugNav {
-  width: 100%;
-  height: 40px;
-  line-height: 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-.mobileDebugNavItem {
-  position: relative;
-  float: left;
-  text-align: center;
-  color: #fff;
-}
-.mobileDebugNavItemActive:after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 8px;
-  margin-left: -30px;
-  display: inline-block;
-  width: 60px;
-  height: 24px;
-  background-color: #fff;
-  opacity: 0.3;
-  border-radius: 4px;
-}
-.mobileDebugContWrap {
-  position: absolute;
-  top: 50px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-}
-.mobileDebugCont {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-.mobileDebugLogItem {
-  position: relative;
-  color: #fff;
-  width: 100%;
-  margin-top: 10px;
-  line-height: 40px;
-}
-.mobileDebugLogItem:before {
-  content: '';
-  position: absolute;
-  height: 1px;
-  width: 60%;
-  left: 20%;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.2);
-}
-.mobileDebugLogItem:first-child {
-  margin-top: 0;
-}
-.mobileDebugLogItemCont {
-  float: left;
-  width: 75%;
-}
-.mobileDebugLogItemComponent {
-  float: right;
-  width: 25%;
-}
+<style lang="less">
+@import './index.less';
 </style>
