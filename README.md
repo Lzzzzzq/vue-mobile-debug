@@ -4,10 +4,24 @@
 
 ## 安装
 
-```javascript
+```js
 npm install --save vue-mobile-debug
 // or
+cnpm install --save vue-mobile-debug
+// or
 yarn add vue-mobile-debug
+```
+
+## demo
+
+```js
+git clone https://github.com/Lzzzzzq/vue-mobile-debug.git
+
+cd vue-mobile-debug
+
+npm install
+
+npm run dev
 ```
 
 ## 使用
