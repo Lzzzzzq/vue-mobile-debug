@@ -1,7 +1,7 @@
 {
   "name": "vue-mobile-debug",
   "description": "基于 vue 的移动端调试工具",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "lzzzzzq",
   "keywords": ["vue", "mobile", "debug", "plugin", "component"],
   "license": "MIT",

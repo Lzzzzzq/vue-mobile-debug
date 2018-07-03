@@ -2,6 +2,13 @@
 
 基于 vue 的移动端调试小工具
 
+## 功能
+
+* 移动端模拟 console 信息
+* 一键清理 cookies、localstorage，刷新页面
+* 显示 cookies、localstorage
+* 显示页面性能数据
+
 ## 安装
 
 ```js
@@ -51,4 +58,4 @@ this.$err('error')
 ![example图片示例][1]
 
 
-[1]: http://7xt9bz.com2.z0.glb.clouddn.com/vue-mobile-debug.png
+[1]: http://7xt9bz.com2.z0.glb.clouddn.com/vue-mobile-debug2.png
