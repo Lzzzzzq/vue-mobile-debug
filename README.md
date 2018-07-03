@@ -1,18 +1,33 @@
 # vue-mobile-debug
 
-> A Vue.js project
+基于 vue 的移动端调试小工具
 
-## Build Setup
+## 安装
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
+```javascript
+npm install --save vue-mobile-debug
+// or
+yarn add vue-mobile-debug
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 使用
+
+```js
+// 引入插件
+
+import VueMobileDebug from 'vue-mobile-debug'
+
+Vue.use(VueMobileDebug, true)
+
+// 第二个参数代表是否显示，测试环境时打开即可
+```
+```js
+// 使用
+
+// this 指向为 vue component
+
+// 输出到工具的控制台
+
+this.$log('normal')
+this.$err('error')
+```
