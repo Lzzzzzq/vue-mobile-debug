@@ -45,3 +45,10 @@ Vue.use(VueMobileDebug, true)
 this.$log('normal')
 this.$err('error')
 ```
+
+## 效果
+
+![example图片示例][1]
+
+
+[1]: http://7xt9bz.com2.z0.glb.clouddn.com/vue-mobile-debug.png
