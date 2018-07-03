@@ -71,13 +71,31 @@
             <pre>{{!dataCont ? '毛都没有' : dataCont}}</pre>
           </div>
         </div>
+        <!-- 性能框 -->
+        <div class="mobileDebugCont" v-show="navIndex === 3">
+          <div class="mobileDebugPerformanceWrap">
+            <div class="mobileDebugPerformanceText" v-show="performanceState === 0 || performanceErr">
+              {{performanceMsg}}
+            </div>
+            <div class="mobileDebugPerformanceDataWrap" v-show="performanceState === 1 && !performanceErr">
+              <div 
+                class="mobileDebugPerformanceData clearfix"
+                v-for="(value, key) in performanceObj"
+              >
+                <div class="mobileDebugPerformanceDataKey">{{key}}</div>
+                <div class="mobileDebugPerformanceDataValue">{{value}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {getCookies, clearCookies, clearLocalStorage, getLocalStorage} from './common'
+import {getCookies, clearCookies, clearLocalStorage, getLocalStorage} from './utils/common'
+import getPerformance from './utils/performance'
 
 export default {
   name: 'MobileDebug',
@@ -97,6 +115,8 @@ export default {
         name: '操作'
       }, {
         name: '数据'
+      }, {
+        name: '性能'
       }],
       navIndex: 0, // 导航选中的索引值
       log: [], // log列表
@@ -108,7 +128,11 @@ export default {
         }
       ],
       dataIndex: -1, // 数据框内选择的按钮
-      dataCont: '' // 数据框内容
+      dataCont: '', // 数据框内容
+      performanceState: 0, // 性能获取状态
+      performanceObj: {}, // 性能数据
+      performanceErr: false, // 性能获取是否出错
+      performanceMsg: '正在获取性能数据' // 性能框提示框  
     }
   },
   watch: {
@@ -123,6 +147,7 @@ export default {
   },
   mounted: function () {
     this.handleSelectDataBtn(0)
+    this.getPerformance()
   },
   methods: {
     handleTouchStart: function (e) { // 手指触碰后
@@ -176,6 +201,20 @@ export default {
     },
     handleClearLocalStorage: function () { // 清空 localstorage
       clearLocalStorage()
+    },
+    getPerformance: function () { // 获取性能数据
+      getPerformance()
+        .then(data => {
+          this.performanceState = 1
+          this.performanceErr = false
+          this.performanceMsg = ''
+          this.performanceObj = data.timing
+        })
+        .catch(e => {
+          this.performanceState = 1
+          this.performanceErr = true
+          this.performanceMsg = e.msg
+        })
     }
   }
 }

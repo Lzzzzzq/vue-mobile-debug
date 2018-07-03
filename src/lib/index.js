@@ -1,5 +1,5 @@
 import MobileDebug from './index.vue'
-import {isString, isNumber, isArray, isObject, isFunction} from './check'
+import {isString, isNumber, isArray, isObject, isFunction} from './utils/check'
 let MobileDebugPlugin = {}
 
 MobileDebugPlugin.install = function (Vue, show) {

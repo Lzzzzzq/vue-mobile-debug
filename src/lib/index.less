@@ -3,6 +3,7 @@
 @yellow: yellow;
 @red: red;
 @cont: #fff;
+@blue: #13c2c2;
 
 .clear {
   width: 0;
@@ -186,6 +187,32 @@ pre {
           overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
           color: @cont;
+        }
+        // performan part
+        .mobileDebugPerformanceWrap {
+
+          .mobileDebugPerformanceText {
+            color: @white;
+          }
+        }
+        .mobileDebugPerformanceDataWrap {
+
+          .mobileDebugPerformanceData {
+            color: @white;
+            margin-top: 4px;
+
+            &:first-child {
+              margin-top: 0;
+            }
+            .mobileDebugPerformanceDataKey {
+              float: left;
+            }
+            .mobileDebugPerformanceDataValue {
+              float: left;
+              margin-left: 10px;
+              color: @blue;
+            }
+          }
         }
       }
     }
