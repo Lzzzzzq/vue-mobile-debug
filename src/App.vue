@@ -1,56 +1,55 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png" class="img" :class="{'active': active}">
-    <div>
-      <button @click="moveImg" class="btn" ref="btn">move</button>
-      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
-      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1
-      <img src="//gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="">
-      <br/>1<br/>1<br/>1<br/>1<br/>1<br/>
-      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
-      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
-      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
-      1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>1<br/>
-    </div>
+    <img src="./assets/logo.png">
+    <h1>{{ msg }}</h1>
+    <h2>Essential Links</h2>
+    <button @click="handleConsole">console log</button>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'App',
+  name: 'app',
   data () {
     return {
-      active: false
+      msg: 'Welcome to Your Vue.js App'
     }
   },
   methods: {
-    moveImg: function () {
-      // let btn = document.getElementsByClassName('btn')[0]
-      // console.log(btn.clientHeight)
-      // let btn = this.$refs.btn
-      this.$log(123)
-      this.$log('123')
-      this.$log([1, 2, 3])
-      this.$log({a: 1, b: 2, c: 3, d: '这是个啥', e: '超出长度了的话会发生什么情况呢aaaaaaa'})
-      this.$err(function tst () {})
-      this.active = true
+    handleConsole: function () {
+      this.$log(Date.parse(new Date()))
+      // this.$log(1, 2, 3, [1, 2, 3])
+      this.$err(Date.parse(new Date()))
     }
-  },
-  mounted: function () {
-    // this.$log(123)
   }
 }
 </script>
 
 <style>
-.img {
-  position: absolute;
-  top: 100px;
-  left: 0;
-  transition: all 0.3s;
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
-.active {
-  left: 100px;
+
+h1, h2 {
+  font-weight: normal;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+a {
+  color: #42b983;
 }
 </style>

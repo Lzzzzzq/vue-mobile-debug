@@ -43,16 +43,15 @@
             :class="{mobileDebugLogItemErr: log.type === 'error'}"
             v-for="(log, index) in log"
             :key="index"
-            @touchstart.stop="handleItemTouchStart"
-            @touchmove.stop="handleItemTouchMove(index)"
-            @touchend.stop="handleItemTouchEnd"
           >
             <div class="mobileDebugLogItemCont"><pre>{{log.cont || undefined}}</pre></div>
             <div class="mobileDebugLogItemComponent">{{log.component || 'unset'}}</div>
           </div>
         </div>
         <!-- 操作框 -->
-        <div class="mobileDebugCont" v-show="navIndex === 1">
+        <div class="mobileDebugCont clearfix" v-show="navIndex === 1">
+          <div class="mobileDebugOperateBtn" @click="handleClearLocalStorage">清空 LocalStorage</div>
+          <div class="mobileDebugOperateBtn" @click="handleClearCookies">清空 Cookies</div>
           <div class="mobileDebugOperateBtn" @click="handleRefreshPage">刷新页面</div>
         </div>
         <!-- 数据框 -->
@@ -69,7 +68,7 @@
             </div>
           </div>
           <div class="mobileDebugDataCont">
-            <pre>{{dataCont}}</pre>
+            <pre>{{!dataCont ? '毛都没有' : dataCont}}</pre>
           </div>
         </div>
       </div>
@@ -78,6 +77,8 @@
 </template>
 
 <script>
+import {getCookies, clearCookies, clearLocalStorage, getLocalStorage} from './common'
+
 export default {
   name: 'MobileDebug',
   data () {
@@ -98,10 +99,6 @@ export default {
         name: '数据'
       }],
       navIndex: 0, // 导航选中的索引值
-      deleteOffsite: 75, // 删除需要滑动的距离
-      deleteTouch: false, // 手指是否接触单条
-      deleteTouchStart: 0, // 删除某条时手指接触的位置
-      deleteIndex: -1, // 要删除的条的索引值
       log: [], // log列表
       dataBtn: [ // 数据框内的按钮
         {
@@ -119,6 +116,9 @@ export default {
       setTimeout(() => {
         this.$refs.logWrap.scrollTop = this.$refs.logWrap.scrollHeight
       })
+    },
+    navIndex: function () {
+      this.changeDataCont(this.dataIndex)
     }
   },
   mounted: function () {
@@ -148,23 +148,6 @@ export default {
     handleSelectNav: function (index) { // 切换导航
       this.navIndex = index
     },
-    handleItemTouchStart: function (e) { // 某一条被手指接触
-      this.deleteTouch = true
-      this.deleteTouchStart = e.targetTouches[0].clientX
-    },
-    handleItemTouchMove: function (index) { // 某一条手指移动
-      if (!this.deleteTouch) return false
-      this.deleteIndex = index
-    },
-    handleItemTouchEnd: function (e) { // 某一条停止移动
-      if (!this.deleteTouch) return false
-      let deleteOffset = Math.abs(e.changedTouches[0].clientX - this.deleteTouchStart)
-      if (deleteOffset > this.deleteOffsite) {
-        this.log.splice(this.deleteIndex, 1)
-      }
-      this.deleteIndex = -1
-      this.deleteTouch = false
-    },
     handleCleanAllLog: function () { // 清空log
       this.log = []
     },
@@ -174,17 +157,25 @@ export default {
     handleSelectDataBtn: function (index) { // 选择数据项
       this.dataCont = ''
       this.dataIndex = index
-      if (index === 0) { // 获取 cookies
-        if (!document.cookie) return
-        let cookieArr = document.cookie.split('; ')
-        let cookies = {}
-        cookieArr.map(item => {
-          cookies[item.split('=')[0]] = item.split('=')[1]
-        })
-        this.dataCont = JSON.stringify(cookies, null, 2)
-      } else if (index === 1) { // 获取 localstorage
-        this.dataCont = JSON.stringify(localStorage, null, 2)
+      this.changeDataCont(index)
+    },
+    changeDataCont: function (type) { // 修改dataCont为cookies
+      switch (type) {
+        case 0:
+          this.dataCont = JSON.stringify(getCookies(), null, 2)
+          break
+        case 1:
+          this.dataCont = JSON.stringify(getLocalStorage(), null, 2)
+          break
+        default:
+          return
       }
+    },
+    handleClearCookies: function () { // 清空 cookies
+      clearCookies()
+    },
+    handleClearLocalStorage: function () { // 清空 localstorage
+      clearLocalStorage()
     }
   }
 }

@@ -2,7 +2,7 @@ import MobileDebug from './index.vue'
 import {isString, isNumber, isArray, isObject, isFunction} from './check'
 let MobileDebugPlugin = {}
 
-MobileDebugPlugin.install = function (Vue, hide) {
+MobileDebugPlugin.install = function (Vue, show) {
   const MobileDebugConstructor = Vue.extend(MobileDebug)
   const instance = new MobileDebugConstructor()
   let documentBody = document.body || document.documentElement
@@ -10,28 +10,26 @@ MobileDebugPlugin.install = function (Vue, hide) {
   instance.$mount(document.createElement('div'))
   documentBody.appendChild(instance.$el)
 
-  if (hide) {
-    instance.enabled = false
-  } else {
+  if (show) {
     instance.enabled = true
+  } else {
+    instance.enabled = false
   }
 
-  Vue.prototype.$log = function (cont) {
-    if (!cont || hide) return false
-    console.log(cont)
-    cont = formatCont(cont)
+  Vue.prototype.$log = function () {
+    if (!arguments || !show) return false
+    console.log(...arguments)
     instance.log.push({
-      cont: cont,
+      cont: mapArguments(arguments),
       type: 'normal',
       component: this.$options.name || 'Not vue'
     })
   }
-  Vue.prototype.$err = function (cont) {
-    if (!cont || hide) return false
-    console.warn(cont)
-    cont = formatCont(cont)
+  Vue.prototype.$err = function () {
+    if (!arguments || !show) return false
+    console.warn(...arguments)
     instance.log.push({
-      cont: cont,
+      cont: mapArguments(arguments),
       type: 'error',
       component: this.$options.name || 'Not vue'
     })
@@ -51,6 +49,14 @@ function formatCont (cont) {
     cont = 'Error: Other type'
   }
   return cont
+}
+
+function mapArguments (arr) {
+  let resCont = ''
+  for (let i = 0 ; i < arr.length ; i ++) {
+    resCont += formatCont(arr[i])
+  }
+  return resCont
 }
 
 export default MobileDebugPlugin
