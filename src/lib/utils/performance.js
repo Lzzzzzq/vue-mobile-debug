@@ -30,7 +30,9 @@ export default function checkPerformance () {
           }, 200)
           return
         }
-        timingObj['js占用内存'] = (performance.memory.usedJSHeapSize / 1000000).toFixed(2) + 'mb'
+        if (performance.memory) {
+          timingObj['js占用内存'] = (performance.memory.usedJSHeapSize / 1000000).toFixed(2) + 'mb'
+        }
         timingObj['重定向时间'] = ((time.redirectEnd - time.redirectStart) / 1000).toFixed(2) + 's'
         timingObj['DNS解析时间'] =
           ((time.domainLookupEnd - time.domainLookupStart) / 1000).toFixed(2) + 's'
@@ -59,6 +61,7 @@ export default function checkPerformance () {
           timing: timingObj
         })
       } catch (e) {
+        alert(e)
         reject({
           state: 0,
           msg: '获取失败'
